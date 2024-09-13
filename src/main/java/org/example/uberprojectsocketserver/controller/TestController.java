@@ -27,12 +27,12 @@ public class TestController {
         return TestResponse.builder().data("Received").build();
     }
 
-    @SendTo("/topic/scheduled")
-    @Scheduled(fixedDelay = 2000)
-    public void sendPeriodicMessage(){
-        System.out.println("Sending scheduled message");
-        simpMessagingTemplate.convertAndSend("/topic/scheduled","Periodic message sent "+ System.currentTimeMillis());
-    }
+//    @SendTo("/topic/scheduled")
+//    @Scheduled(fixedDelay = 2000)
+//    public void sendPeriodicMessage(){
+//        System.out.println("Sending scheduled message");
+//        simpMessagingTemplate.convertAndSend("/topic/scheduled","Periodic message sent "+ System.currentTimeMillis());
+//    }
 
     // send message in group
     @MessageMapping("chat/{room}")
