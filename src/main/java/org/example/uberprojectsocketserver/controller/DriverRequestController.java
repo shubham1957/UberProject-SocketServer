@@ -1,32 +1,39 @@
 package org.example.uberprojectsocketserver.controller;
 
+import org.apache.kafka.clients.admin.NewTopic;
 import org.example.uberprojectsocketserver.dto.RideRequestDto;
 import org.example.uberprojectsocketserver.dto.RideResponseDto;
 import org.example.uberprojectsocketserver.dto.UpdateBookingRequestDto;
 import org.example.uberprojectsocketserver.dto.UpdateBookingResponseDto;
+import org.example.uberprojectsocketserver.producers.KafkaProducerService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.messaging.handler.annotation.DestinationVariable;
 import org.springframework.messaging.handler.annotation.MessageMapping;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
-import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.client.RestTemplate;
 
 import java.util.Optional;
 
-@Controller
+@RestController
 @RequestMapping("/api/socket")
 public class DriverRequestController {
 
     private final SimpMessagingTemplate simpMessagingTemplate;
     private final RestTemplate restTemplate;
+    private final KafkaProducerService kafkaProducerService;
 
-    public DriverRequestController(SimpMessagingTemplate simpMessagingTemplate) {
+    public DriverRequestController(SimpMessagingTemplate simpMessagingTemplate, KafkaProducerService kafkaProducerService, NewTopic sampleTopic) {
         this.simpMessagingTemplate = simpMessagingTemplate;
         this.restTemplate=new RestTemplate();
+        this.kafkaProducerService=kafkaProducerService;
+    }
+
+    @GetMapping
+    public Boolean help(){
+        kafkaProducerService.publishMessage("sample-topic","Hello !");
+        return true;
     }
 
     @PostMapping("/newride")
@@ -57,7 +64,12 @@ public class DriverRequestController {
                 .driverId(Optional.of(Long.parseLong(userId)))
                 .status("SCHEDULED")
                 .build();
+        // TODO : send this dto to consumer in booking service - ex : kafkaProducerService.publishMessage("sample-topic","Hello !");
 
+        // async req
+        kafkaProducerService.publishMessage("sample-topic","Hello !");
+
+        // sync req
         ResponseEntity<UpdateBookingResponseDto> result = this.restTemplate.postForEntity("http://localhost:7477/api/v1/booking/" + rideResponseDto.bookingId ,requestDto, UpdateBookingResponseDto.class);
         System.out.println(result.getStatusCode());
 
