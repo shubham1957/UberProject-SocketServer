@@ -8,7 +8,6 @@ import org.springframework.messaging.handler.annotation.DestinationVariable;
 import org.springframework.messaging.handler.annotation.MessageMapping;
 import org.springframework.messaging.handler.annotation.SendTo;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
-import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Controller;
 
 @Controller
@@ -26,13 +25,6 @@ public class TestController {
         System.out.println("Message received from client : "+message.getData());
         return TestResponse.builder().data("Received").build();
     }
-
-//    @SendTo("/topic/scheduled")
-//    @Scheduled(fixedDelay = 2000)
-//    public void sendPeriodicMessage(){
-//        System.out.println("Sending scheduled message");
-//        simpMessagingTemplate.convertAndSend("/topic/scheduled","Periodic message sent "+ System.currentTimeMillis());
-//    }
 
     // send message in group
     @MessageMapping("chat/{room}")

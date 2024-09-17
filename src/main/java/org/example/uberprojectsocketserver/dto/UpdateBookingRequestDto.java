@@ -1,6 +1,7 @@
 package org.example.uberprojectsocketserver.dto;
 
 import lombok.*;
+import org.example.uberprojectentityservice.models.BookingStatus;
 
 import java.util.Optional;
 
@@ -11,7 +12,7 @@ import java.util.Optional;
 @AllArgsConstructor
 public class UpdateBookingRequestDto {
 
-    private String status;
+    private BookingStatus status;
     private Long bookingId;
     private Optional<Long> driverId;
 
